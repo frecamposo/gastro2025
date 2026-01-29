@@ -38,7 +38,7 @@ async def asignatura_lista(id_usuario: int):
             join carrera c on a.cod_carrera = c.cod_carrera \
             left outer join taller t on a.sigla = t.sigla \
             left outer join config_taller ct on t.id_taller = ct.id_taller \
-            left outer join producto p on ct.id_producto = p.id_producto \
+            left outer join producto p on ct.id_producto = p.id_producto where estado=1 \
             group by a.sigla, \
                 a.nom_asign, \
                 a.nom_asign_abrev, \
@@ -213,7 +213,7 @@ async def usuario_get(sigla: str, id_usuario: int):
     db = await get_db_connection()
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al conectar a la base de datos")
-
+    print("entro a config taller...")
     try:
         query = " \
             select a.sigla as sigla, \
@@ -346,3 +346,56 @@ async def asignatura_insertar(asignatura: Asignatura) -> Asignatura:
         db.close()
 
     return asignatura
+
+
+
+
+@router.delete("/api/asignatura/deshabilitar/{sigla}/{id_usuario}", response_model=dict, summary="Deshabilitar una asignatura", tags=["Asignaturas"])
+async def deshabilitar_eliminar(sigla: str, id_usuario: int):
+
+    # Determinamos el perfil del usuario para determinar qué información puede borrar
+    perfil = await perfil_usuario(id_usuario)
+    usuarios: List[Usuario] = []
+    # Si todo está correcto, Retornamos la respuesta de la API
+    if not perfil:
+        return usuarios
+    # Perfil docente no debe ver nada
+    if perfil.cod_perfil == Const.K_DOCENTE.value:
+        return {
+            "sigla": sigla,
+            "deshabilitado": False,
+            "msg_error": "Usuario con perfil Docente no tiene acceso a deshabilitar"
+        }
+
+    db = await get_db_connection()
+    if db is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al conectar a la base de datos")
+
+    try:
+        query = "update asign set estado=0 where sigla = %s"
+
+        values = (sigla)
+        async with db.cursor() as cursor:
+            await cursor.execute(query, values)
+            await db.commit()
+
+            return {
+                "sigla": sigla,
+                "deshabilitado": True,
+                "msg_error": None
+            }
+
+    except aiomysql.Error as e:
+        error_message = str(e)
+        # Controlamos de manera especial el error de integridad de datos
+        if "Connection" in error_message:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al conectar a la base de datos")
+        else:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Error en la consulta a la base de datos. DBerror {error_message}")
+
+    except Exception as e:
+        error_message = str(e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error en la base de datos. DBerror {error_message}")
+
+    finally:
+        db.close()

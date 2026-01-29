@@ -6,7 +6,7 @@ import aiomysql
 
 from typing import List
 from models.taller import Taller
-from models.producto_taller import ProductoTaller
+from models.producto_taller import ProductoTaller, ObservacionProductoTaller
 from database import get_db_connection
 from api.perfil import perfil_usuario
 
@@ -296,7 +296,7 @@ async def taller_producto_lista(id_taller: int):
             p.nom_producto as nom_producto, \
             p.cod_categ_producto as cod_categ_producto, \
             cp.nom_categ_producto as nom_categ_producto, \
-            a.nom_agrupador as nom_agrupador, \
+            a.nom_agrupador as nom_agrupador, ct.obs as obs, \
             p.precio as precio, \
             round(p.precio * ct.cantidad, 0) as total, \
             case \
@@ -349,8 +349,9 @@ async def taller_producto_lista(id_taller: int):
                                   cod_categ_producto=row[6],
                                   nom_categ_producto=row[7],
                                   nom_agrupador=row[8],
-                                  precio=row[9],
-                                  total=row[10],)
+                                  obs=row[9],
+                                  precio=row[10],
+                                  total=row[11],)
 
         productos.append(producto)
 
@@ -570,3 +571,43 @@ async def producto_taller_insertar(producto: ProductoTaller) -> ProductoTaller:
         db.close()
 
     return producto
+
+
+## agregar una observacion de un producto en un taller específico con su agrupador respectivo
+@router.post("/api/taller/producto/obs", response_model=ObservacionProductoTaller, summary="Agregar una observacion de un producto de un taller específico", tags=["Talleres"])
+async def producto_taller_insertar_obs(observacion: ObservacionProductoTaller) -> ObservacionProductoTaller:
+
+    db = await get_db_connection()
+    if db is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al conectar a la base de datos")
+
+    try:
+        query = " \
+            update config_taller set \
+                obs = %s \
+            where id_taller = %s and id_producto = %s"
+        values = (observacion.obs,
+                  observacion.id_taller,
+                  observacion.id_producto)
+        async with db.cursor() as cursor:
+            await cursor.execute(query, values)
+
+    except aiomysql.Error as e:
+        error_message = str(e)
+        # Controlamos de manera especial el error de integridad de datos
+        if "1062" in error_message:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Error al insertar registro existente. DBerror {error_message}")
+
+        if "Connection" in error_message:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error al conectar a la base de datos. DBerror {error_message}")
+        else:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Error en la consulta a la base de datos. DBerror {error_message}")
+
+    except Exception as e:
+        error_message = str(e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error en la base de datos. DBError {error_message}")
+
+    finally:
+        db.close()
+
+    return observacion

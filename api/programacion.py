@@ -42,13 +42,14 @@ async def programacion_asignatura_lista(ano_academ: int, id_usuario: int):
                 a.cod_carrera as cod_carrera, \
                 c.nom_carrera as nom_carrera, \
                 a.nom_asign as nom_asign, \
+                pa.alumnos as alumnos, \
                 per.nom_periodo_academ as nom_periodo_academ \
             from prog_asign pa \
                 join periodo_academ per on pa.cod_periodo_academ = per.cod_periodo_academ \
                 join asign a on pa.sigla = a.sigla \
                 join carrera c on a.cod_carrera = c.cod_carrera \
             where pa.ano_academ = %s and \
-                a.cod_carrera = %s \
+                a.cod_carrera = %s and a.estado=1 \
             order by pa.cod_periodo_academ asc, \
                 a.cod_carrera asc, \
                 pa.sigla asc, \
@@ -87,12 +88,13 @@ async def programacion_asignatura_lista(ano_academ: int, id_usuario: int):
                 a.cod_carrera as cod_carrera, \
                 c.nom_carrera as nom_carrera, \
                 a.nom_asign as nom_asign, \
+                pa.alumnos as alumnos, \
                 per.nom_periodo_academ as nom_periodo_academ \
             from prog_asign pa \
                 join periodo_academ per on pa.cod_periodo_academ = per.cod_periodo_academ \
                 join asign a on pa.sigla = a.sigla \
                 join carrera c on a.cod_carrera = c.cod_carrera \
-            where pa.ano_academ = %s \
+            where pa.ano_academ = %s and a.estado=1 \
             order by a.cod_carrera asc, \
                 pa.cod_periodo_academ asc, \
                 a.cod_carrera asc, \
@@ -133,7 +135,8 @@ async def programacion_asignatura_lista(ano_academ: int, id_usuario: int):
                                               cod_carrera=row[4],
                                               nom_carrera=row[5],
                                               nom_asignatura=row[6],
-                                              nom_periodo_academ=row[7])
+                                              alumnos=row[7],
+                                              nom_periodo_academ=row[8])
 
         programaciones.append(programacion)
 
@@ -286,7 +289,7 @@ async def programacion_taller_lista(ano_academ: int, cod_periodo_academ: int, si
         where pt.ano_academ = %s and \
             pt.cod_periodo_academ = %s and \
             pt.sigla = %s and \
-            pt.seccion = %s \
+            pt.seccion = %s and a.estado=1\
         order by pt.fecha asc, \
             t.semana asc"
 
@@ -392,7 +395,7 @@ async def programacion_taller(ano_academ: int, cod_periodo_academ: int, sigla: s
             pt.sigla = %s and \
             pt.seccion = %s and \
             pt.id_taller = %s and \
-            pt.fecha = %s"
+            pt.fecha = %s and a.estado=1"
 
     db = await get_db_connection()
     if db is None:

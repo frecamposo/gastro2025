@@ -39,8 +39,8 @@ class ActualizarStockProducto(BaseModel):
     
 class ActualizarProducto(BaseModel):
     id_producto: int
-    stock_critico: int
-    cantidad:int
+    stock_critico: float
+    cantidad:float
         
 class DetalleIngreso(BaseModel):
     id_detalle: Optional[int]

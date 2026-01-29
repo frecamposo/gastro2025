@@ -291,7 +291,13 @@ async def usuario_insertar(producto: Producto) -> Producto:
         async with db.cursor() as cursor:
             await cursor.execute(query, values)
             producto.id_producto = cursor.lastrowid
-
+            # insert en bodega del nuevo articulo
+            query_bodega = " INSERT INTO bodega(id_producto,nom_producto,precio,cantidad,stock_critico,cod_unidad_medida,cod_categ_producto) \
+                SELECT p.id_producto,p.nom_producto,p.precio,0,0,p.cod_unidad_medida,p.cod_categ_producto \
+                FROM producto p LEFT JOIN bodega b \
+                ON p.id_producto=b.id_producto \
+                WHERE b.id_producto IS NULL;"
+            await cursor.execute(query_bodega)
     except aiomysql.Error as e:
         error_message = str(e)
         print(error_message)

@@ -446,18 +446,20 @@ async def consulta_asignacion_registro_docentes(ano_academ: int, id_usuario: int
 async def consulta_resumen_producto_periodo(ano_academ: int, fecha_inicio: date, fecha_termino: date, id_usuario: int):
     registro: RegistroConsultaResumenProductoRangoFechas = None
     registros: List[RegistroConsultaResumenProductoRangoFechas] = []
-
+    print("Inicio consulta resumen de productos")
     # Determinamos el perfil del usuario para determinar qué información puede ver
     perfil = await perfil_usuario(id_usuario)
     # Si todo está correcto, Retornamos la respuesta de la API
+    print("Perfil obtenido",perfil)
     if not perfil:
         return registros
     # Perfil docente no debe tener acceso a listados
     if perfil.cod_perfil == Const.K_DOCENTE.value:
         return registros
-
+    print("entro")
     if perfil.cod_perfil == Const.K_ADMINISTRADOR_TI.value or perfil.cod_perfil == Const.K_JEFE_BODEGA.value:
         # (select cantidad as stock from bodega b where b.nom_producto=p.nom_producto)    \
+        
         query = " \
             select c.nom_carrera as nom_carrera, \
                 cp.nom_categ_producto as nom_categ_producto, \
@@ -507,7 +509,7 @@ async def consulta_resumen_producto_periodo(ano_academ: int, fecha_inicio: date,
 
         finally:
             db.close()
-
+    print("Perfil del usuario",perfil.cod_perfil)
     if perfil.cod_perfil == Const.K_ADMINISTRADOR_CARRERA.value:
         query = " \
             select c.nom_carrera as nom_carrera, \
@@ -537,6 +539,7 @@ async def consulta_resumen_producto_periodo(ano_academ: int, fecha_inicio: date,
             order by c.nom_carrera asc, \
                 cp.nom_categ_producto asc, \
                 p.nom_producto asc"
+        print("Datos de la query obtenidos",query)
         db = await get_db_connection()
         if db is None:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al conectar a la base de datos")
@@ -562,6 +565,8 @@ async def consulta_resumen_producto_periodo(ano_academ: int, fecha_inicio: date,
             db.close()
 
     # Armamos el diccionario de salida
+    print("Datos de la query obtenidos",result)
+    
     for row in result:
         registro = RegistroConsultaResumenProductoRangoFechas(nom_carrera = row[0],
                                                               nom_categ_producto = row[1],

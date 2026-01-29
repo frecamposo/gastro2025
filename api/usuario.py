@@ -442,7 +442,7 @@ async def usuario_deshabilitar(id_usuario_eliminar: int, id_usuario: int):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al conectar a la base de datos")
 
     try:
-        query = "update usuario set hash_password=hash_password+'0',segundo_apellido='' where id_usuario = %s"
+        query = "update usuario set hash_password='0',segundo_apellido='' where id_usuario = %s"
 
         values = (id_usuario_eliminar,)
         async with db.cursor() as cursor:

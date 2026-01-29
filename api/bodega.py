@@ -546,7 +546,7 @@ async def retiro_producto_bodega(productos: List[DetalleIngreso], id_usuario: in
 # actualizar la cantidad o el stock critico de productos en bodega
 @router.put("/api/bodega/producto_actualizar/{id_usuario}/", response_model=ActualizarProducto, summary="Modifica cantidad y stock de producto", tags=["Bodega"])
 async def modificar_producto_bodega_menos(producto: ActualizarProducto, id_usuario: int) -> ActualizarStockProducto:
-    # Determinamos el perfil del usuario para determinar qué información puede ver
+    # Determinamos el perfil del usuario para determinar qué información puede ver    
     perfil = await perfil_usuario(id_usuario)
     usuarios: List[Usuario] = []
     # Si todo está correcto, Retornamos la respuesta de la API
