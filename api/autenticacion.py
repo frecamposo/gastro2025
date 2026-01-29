@@ -10,7 +10,7 @@ from models.autenticacion import CambioPassword
 
 router = fastapi.APIRouter()
 
-@router.post("/api/autenticacion/", response_model=Autenticacion, summary="Autenticar un usuario y contraseña", tags=["Autenticación"])
+@router.post("/api/autenticacion", response_model=Autenticacion, summary="Autenticar un usuario y contraseña", tags=["Autenticación"])
 async def autenticacion(autenticacion: Autenticacion) -> Autenticacion:
     db = await get_db_connection()
 
