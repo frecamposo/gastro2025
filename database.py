@@ -6,10 +6,10 @@ async def get_db_connection():
     try:
         # Establece los parámetros de conexión
         conn = await aiomysql.connect(
-            host="localhost",
+            host="mysql.railway.internal",
             port=3306,
             user="root",
-            password="",
+            password="eVDyoCODzXXFVditKVWwmjITDfwijYoS",
             db="admtaller",
             autocommit=True
         )
