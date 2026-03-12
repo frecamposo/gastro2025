@@ -717,8 +717,8 @@ async def consulta_detalle_producto_taller_periodo(ano_academ: int, fecha_inicio
 
     # Armamos el diccionario de salida
     print("Query Consulta 5 (Datos): ",result)
-    for row in result:
-        try:
+    try:
+        for row in result:        
             registro = RegistroConsultaDetalleProductoTallerRangoFechas(nom_carrera = row[0],
                                                                 nom_categ_producto = row[1],
                                                                 nom_producto = row[2],
@@ -736,6 +736,6 @@ async def consulta_detalle_producto_taller_periodo(ano_academ: int, fecha_inicio
                                                                 stock=row[14],)
     
             registros.append(registro)
-        except Exception as e:
+    except Exception as e:
             print("Error en  RegistroConsultaDetalleProductoTallerRangoFechas: ",e)
     return registros
