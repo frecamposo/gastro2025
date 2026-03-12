@@ -610,7 +610,7 @@ async def consulta_detalle_producto_taller_periodo(ano_academ: int, fecha_inicio
                 a.nom_asign as nom_asign, \
                 pt.seccion as seccion, \
                 t.semana as semana, \
-                t.titulo_preparacion as titulo_preparacion, (select bo.cantidad from bodega bo WHERE p.id_producto=bo.id_producto) as stock  \
+                t.titulo_preparacion as titulo_preparacion, 0 as stock  \
             from prog_taller pt \
             join asign a on pt.sigla = a.sigla \
             join config_taller ct on pt.id_taller = ct.id_taller \
@@ -630,6 +630,7 @@ async def consulta_detalle_producto_taller_periodo(ano_academ: int, fecha_inicio
                 t.semana asc, \
                 pt.fecha asc"
         db = await get_db_connection()
+        #  (select bo.cantidad from bodega bo WHERE p.id_producto=bo.id_producto)
         print("Query Consulta 5 (Administrador y Jefe): ",query)
         if db is None:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al conectar a la base de datos")
