@@ -630,7 +630,7 @@ async def consulta_detalle_producto_taller_periodo(ano_academ: int, fecha_inicio
                 t.semana asc, \
                 pt.fecha asc"
         db = await get_db_connection()
-        print("Datos de la query obtenidos",query)
+        print("Query Consulta 5 (Administrador y Jefe): ",query)
         if db is None:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al conectar a la base de datos")
 
@@ -690,6 +690,7 @@ async def consulta_detalle_producto_taller_periodo(ano_academ: int, fecha_inicio
                 pt.seccion asc, \
                 t.semana asc, \
                 pt.fecha asc"
+        print("Query Consulta 5 (Administrador de carrera): ",query)
         db = await get_db_connection()
         if db is None:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al conectar a la base de datos")
@@ -715,6 +716,7 @@ async def consulta_detalle_producto_taller_periodo(ano_academ: int, fecha_inicio
             db.close()
 
     # Armamos el diccionario de salida
+    print("Query Consulta 5 (Datos): ",result)
     for row in result:
         registro = RegistroConsultaDetalleProductoTallerRangoFechas(nom_carrera = row[0],
                                                             nom_categ_producto = row[1],
