@@ -539,7 +539,7 @@ async def consulta_resumen_producto_periodo(ano_academ: int, fecha_inicio: date,
             order by c.nom_carrera asc, \
                 cp.nom_categ_producto asc, \
                 p.nom_producto asc"
-        print("Datos de la query obtenidos",query)
+        print("Estructura de la Query:",query)
         db = await get_db_connection()
         if db is None:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al conectar a la base de datos")
