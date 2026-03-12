@@ -65,4 +65,4 @@ class RegistroConsultaDetalleProductoTallerRangoFechas(BaseModel):
     seccion: int
     semana: int
     titulo_preparacion: str
-    stock: int
+    stock: int | None = 0
