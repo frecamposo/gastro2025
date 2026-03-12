@@ -718,22 +718,24 @@ async def consulta_detalle_producto_taller_periodo(ano_academ: int, fecha_inicio
     # Armamos el diccionario de salida
     print("Query Consulta 5 (Datos): ",result)
     for row in result:
-        registro = RegistroConsultaDetalleProductoTallerRangoFechas(nom_carrera = row[0],
-                                                            nom_categ_producto = row[1],
-                                                            nom_producto = row[2],
-                                                            cantidad = row[3],
-                                                            nom_unidad_medida = row[4],
-                                                            precio = row[5],
-                                                            precio_total = row[6],
-                                                            fecha = row[7],
-                                                            nom_periodo_academ = row[8],
-                                                            sigla = row[9],
-                                                            nom_asign = row[10],
-                                                            seccion = row[11],
-                                                            semana = row[12],
-                                                            titulo_preparacion = row[13],
-                                                            stock=row[14],)
-
-        registros.append(registro)
-
+        try:
+            registro = RegistroConsultaDetalleProductoTallerRangoFechas(nom_carrera = row[0],
+                                                                nom_categ_producto = row[1],
+                                                                nom_producto = row[2],
+                                                                cantidad = row[3],
+                                                                nom_unidad_medida = row[4],
+                                                                precio = row[5],
+                                                                precio_total = row[6],
+                                                                fecha = row[7],
+                                                                nom_periodo_academ = row[8],
+                                                                sigla = row[9],
+                                                                nom_asign = row[10],
+                                                                seccion = row[11],
+                                                                semana = row[12],
+                                                                titulo_preparacion = row[13],
+                                                                stock=row[14],)
+    
+            registros.append(registro)
+        except Exception as e:
+            print("Error en  RegistroConsultaDetalleProductoTallerRangoFechas: ",e)
     return registros
