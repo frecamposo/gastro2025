@@ -518,7 +518,7 @@ async def consulta_resumen_producto_periodo(ano_academ: int, fecha_inicio: date,
                 sum(ct.cantidad) as cantidad_total_productos, \
                 um.nom_unidad_medida as nom_unidad_medida, \
                 p.precio as precio_producto, \
-                round(sum(ct.cantidad) * p.precio, 0) as precio_total_productos, (select IFNULL(bo.cantidad,0) from bodega bo WHERE bo.id_producto= p.id_producto) as stock  \
+                round(sum(ct.cantidad) * p.precio, 0) as precio_total_productos, (select (bo.cantidad) from bodega bo WHERE bo.id_producto= p.id_producto) as stock  \
             from prog_taller pt \
             join config_taller ct on pt.id_taller = ct.id_taller \
             join producto p on ct.id_producto = p.id_producto \
