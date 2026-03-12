@@ -735,7 +735,7 @@ async def consulta_detalle_producto_taller_periodo(ano_academ: int, fecha_inicio
                                                                 seccion = row[11],
                                                                 semana = row[12],
                                                                 titulo_preparacion = row[13],
-                                                                stock=row[14])
+                                                                stock=0)
     
             registros.append(registro)
     except Exception as e:
