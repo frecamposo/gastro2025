@@ -10,7 +10,7 @@ async def get_db_connection():
             port=3306,
             user="root",
             password="eVDyoCODzXXFVditKVWwmjITDfwijYoS",
-            db="admtaller",
+            db="railway",
             autocommit=True
         )
         # Realiza cualquier otra configuración necesaria
