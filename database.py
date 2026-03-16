@@ -1,7 +1,7 @@
 
 import aiomysql
 
-
+# son dos bases de datos 'railway' (pruebas) y 'admtaller' (produccion) 
 async def get_db_connection():
     try:
         # Establece los parámetros de conexión
